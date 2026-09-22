@@ -1,1 +1,480 @@
 
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[NOMBRE_DE_LA_PAPELERIA] - Catálogo de Productos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        executiveDark: '#090d16',
+                        cardSurface: '#111827',
+                        cardBorder: '#1f293d',
+                        amberAccent: '#f59e0b',
+                        indigoAccent: '#6366f1',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #090d16;
+            background-image: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                              radial-gradient(circle at 85% 30%, rgba(245, 158, 11, 0.06) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f293d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- Encabezado (Header) Ejecutivo con enlace de retorno y contador de carrito -->
+    <header class="glass-panel border-b border-slate-800/80 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <!-- Botón de Retorno y Nombre -->
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-200 transition-colors shadow-sm" title="Regresar al Inicio">
+                    <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+                <a href="index.html" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-amber-500/10 group-hover:scale-105 transition-transform duration-300">
+                        <span class="text-slate-950 font-bold text-lg">✒️</span>
+                    </div>
+                    <span class="font-heading font-bold text-lg tracking-wide text-white group-hover:text-amber-400 transition-colors hidden sm:inline">
+                        [NOMBRE_DE_LA_PAPELERIA]
+                    </span>
+                </a>
+            </div>
+
+            <!-- Título de Sección -->
+            <div class="hidden md:block text-center">
+                <h2 class="text-sm font-semibold tracking-wider text-amber-400 uppercase">Catálogo en Línea</h2>
+                <p class="text-xs text-slate-400">Selecciona tus artículos y arma tu pedido</p>
+            </div>
+
+            <!-- Botón del Carrito Flotante / Toggle -->
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleCartModal()" class="relative group px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-amber-500/40 text-slate-200 text-xs font-semibold flex items-center space-x-2 transition-all shadow-sm">
+                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <span class="hidden sm:inline">Mi Pedido</span>
+                    <span id="cart-badge" class="bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-10 w-full">
+        
+        <!-- Cabecera de Página & Filtros -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 border-b border-slate-800/80 pb-8">
+            <div>
+                <span class="text-xs font-semibold text-indigo-400 uppercase tracking-widest bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">Inventario Disponible</span>
+                <h1 class="font-heading text-3xl sm:text-4xl font-extrabold text-white mt-3">Catálogo y Suministros</h1>
+                <p class="text-slate-400 text-sm mt-1">Explora nuestros productos y ajusta las cantidades que necesites.</p>
+            </div>
+
+            <!-- 1. Filtro de Productos -->
+            <div class="flex items-center space-x-3 bg-slate-900/80 p-2 rounded-2xl border border-slate-800">
+                <span class="text-xs font-medium text-slate-400 pl-2">Ordenar por:</span>
+                <select id="sort-select" onchange="sortProducts()" class="bg-slate-950 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-800 focus:outline-none focus:border-amber-500 transition">
+                    <option value="default">Por defecto</option>
+                    <option value="asc">Menor a mayor precio</option>
+                    <option value="desc">Mayor a menor precio</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- 2. Tarjetas de Productos (Grid Principal) -->
+            <div class="lg:col-span-2">
+                <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Los productos se renderizan dinámicamente vía JS -->
+                </div>
+            </div>
+
+            <!-- 3. Carrito de Compras Lateral / Resumen -->
+            <div class="lg:col-span-1">
+                <div class="glass-panel p-6 rounded-3xl sticky top-28 border border-slate-800 shadow-xl">
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 font-bold">🛒</div>
+                            <h3 class="font-heading text-lg font-bold text-white">Resumen del Pedido</h3>
+                        </div>
+                        <button onclick="clearCart()" class="text-xs text-slate-400 hover:text-red-400 transition" title="Vaciar carrito">Limpiar</button>
+                    </div>
+
+                    <!-- Lista de Artículos en el Carrito -->
+                    <div id="cart-items-container" class="space-y-4 max-h-72 overflow-y-auto pr-2 mb-6">
+                        <p class="text-xs text-slate-500 text-center py-8">Tu carrito está vacío. Agrega productos del catálogo.</p>
+                    </div>
+
+                    <!-- Totales -->
+                    <div class="border-t border-slate-800 pt-4 mb-6 space-y-2">
+                        <div class="flex justify-between text-sm text-slate-400">
+                            <span>Artículos seleccionados:</span>
+                            <span id="cart-total-items" class="font-semibold text-slate-200">0 unidades</span>
+                        </div>
+                        <div class="flex justify-between text-base font-heading font-bold text-white">
+                            <span>Precio Total:</span>
+                            <span id="cart-grand-total" class="text-amber-400">$0.00 MXN</span>
+                        </div>
+                    </div>
+
+                    <!-- 4. Botón para Enviar Pedido por WhatsApp -->
+                    <button onclick="sendWhatsAppOrder()" class="w-full group relative inline-flex items-center justify-center p-0.5 rounded-2xl overflow-hidden font-heading font-bold text-slate-950 shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all">
+                        <span class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 group-hover:scale-105 transition-transform duration-300"></span>
+                        <span class="relative w-full py-3.5 px-4 rounded-[14px] bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 text-sm flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5 text-slate-950" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                            </svg>
+                            <span>Enviar Pedido por WhatsApp</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Sección de Ubicación con Mapa Interactivo (Idéntico a index.html) -->
+        <section class="max-w-4xl mx-auto mt-20 text-left">
+            <div class="glass-panel p-8 sm:p-10 rounded-3xl relative overflow-hidden">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-2">
+                            <span>📍 Localización Física</span>
+                        </div>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-white mb-2">Encuéntranos</h2>
+                        <p class="text-slate-300 text-base font-light">[DIRECCION_COMPLETA]</p>
+                    </div>
+                    <a href="https://maps.app.goo.gl/HmNZAZLE4s12BcLT7" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm px-5 py-3 rounded-xl transition shadow">
+                        <span>Abrir en Google Maps</span>
+                        <svg class="w-4 h-4 ml-2 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Contenedor del Mapa Interactivo (Coordenadas MAR: -5.977390, -155.143339) -->
+                <div class="rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 relative h-80 sm:h-96 shadow-inner">
+                    <iframe class="w-full h-full absolute inset-0 opacity-75 grayscale contrast-125 hover:grayscale-0 transition duration-500" src="https://maps.google.com/maps?q=-5.977390,-155.143339&z=15&output=embed" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Pie de página (Footer) -->
+    <footer class="glass-panel border-t border-slate-800 py-10 text-center text-sm text-slate-400 mt-16">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 font-bold">✒️</div>
+                <span class="font-heading font-semibold text-white">[NOMBRE_DE_LA_PAPELERIA]</span>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 text-xs sm:text-sm">
+                <span>Tel: <strong class="text-slate-300">[TELEFONO]</strong></span>
+                <span class="hidden sm:inline text-slate-700">|</span>
+                <span>Contacto: <strong class="text-slate-300">[CORREO_CONTACTO]</strong></span>
+            </div>
+            <div>
+                <p class="text-xs text-slate-500">© 2026 [NOMBRE_DE_LA_PAPELERIA]. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Lista de productos con marcadores (Sin datos reales inventados)
+        const products = [
+            {
+                id: 1,
+                name: "[NOMBRE_PRODUCTO_1]",
+                description: "[DESCRIPCION_PRODUCTO_1]",
+                price: 45.00,
+                imagePlaceholder: "📓"
+            },
+            {
+                id: 2,
+                name: "[NOMBRE_PRODUCTO_2]",
+                description: "[DESCRIPCION_PRODUCTO_2]",
+                price: 18.50,
+                imagePlaceholder: "✏️"
+            },
+            {
+                id: 3,
+                name: "[NOMBRE_PRODUCTO_3]",
+                description: "[DESCRIPCION_PRODUCTO_3]",
+                price: 120.00,
+                imagePlaceholder: "🎒"
+            },
+            {
+                id: 4,
+                name: "[NOMBRE_PRODUCTO_4]",
+                description: "[DESCRIPCION_PRODUCTO_4]",
+                price: 32.00,
+                imagePlaceholder: "📐"
+            },
+            {
+                id: 5,
+                name: "[NOMBRE_PRODUCTO_5]",
+                description: "[DESCRIPCION_PRODUCTO_5]",
+                price: 85.00,
+                imagePlaceholder: "✂️"
+            },
+            {
+                id: 6,
+                name: "[NOMBRE_PRODUCTO_6]",
+                description: "[DESCRIPCION_PRODUCTO_6]",
+                price: 15.00,
+                imagePlaceholder: "📌"
+            }
+        ];
+
+        // Estado del Carrito (Almacena id -> cantidad)
+        let cart = {};
+
+        // Renderizar Productos en el Grid
+        function renderProducts(itemsToRender = products) {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+
+            itemsToRender.forEach(product => {
+                const currentQty = cart[product.id] || 0;
+                const card = document.createElement('div');
+                card.className = 'glass-panel p-6 rounded-3xl flex flex-col justify-between border border-slate-800 hover:border-slate-700 transition group';
+                
+                card.innerHTML = `
+                    <div>
+                        <!-- Marcador de Imagen de Producto -->
+                        <div class="w-full h-44 rounded-2xl bg-slate-900 border border-slate-800/80 flex items-center justify-center text-4xl mb-6 relative overflow-hidden group-hover:border-amber-500/30 transition">
+                            <span class="absolute top-3 right-3 text-xs font-mono text-slate-500 bg-slate-950 px-2 py-1 rounded-lg">[IMAGEN_PRODUCTO]</span>
+                            <span class="transform group-hover:scale-110 transition-transform duration-300">${product.imagePlaceholder}</span>
+                        </div>
+                        
+                        <h3 class="font-heading text-lg font-bold text-white mb-2">${product.name}</h3>
+                        <p class="text-xs text-slate-400 font-light mb-4 leading-relaxed">${product.description}</p>
+                    </div>
+
+                    <div>
+                        <div class="flex items-baseline justify-between mb-4">
+                            <span class="text-xs text-slate-400">Precio unitario:</span>
+                            <span class="text-lg font-heading font-extrabold text-amber-400">$${product.price.toFixed(2)} MXN</span>
+                        </div>
+
+                        <!-- Controles de Cantidad y Botón -->
+                        <div class="flex items-center justify-between gap-3 pt-4 border-t border-slate-800/80">
+                            <div class="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-1">
+                                <button onclick="updateQuantity(${product.id}, -1)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center font-bold transition">-</button>
+                                <span id="qty-${product.id}" class="w-10 text-center text-xs font-semibold text-slate-200">${currentQty}</span>
+                                <button onclick="updateQuantity(${product.id}, 1)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center font-bold transition">+</button>
+                            </div>
+
+                            <button onclick="addToCartDirect(${product.id})" class="flex-grow py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition shadow-sm flex items-center justify-center space-x-1.5">
+                                <span>Agregar</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Actualizar Cantidad desde los botones de la tarjeta
+        function updateQuantity(productId, change) {
+            if (!cart[productId]) cart[productId] = 0;
+            cart[productId] += change;
+            if (cart[productId] < 0) cart[productId] = 0;
+            if (cart[productId] === 0) delete cart[productId];
+
+            // Actualizar vista local en tarjeta si existe
+            const qtyElement = document.getElementById(`qty-${productId}`);
+            if (qtyElement) {
+                qtyElement.textContent = cart[productId] || 0;
+            }
+
+            updateCartUI();
+        }
+
+        function addToCartDirect(productId) {
+            if (!cart[productId]) {
+                cart[productId] = 1;
+            } else {
+                cart[productId] += 1;
+            }
+            const qtyElement = document.getElementById(`qty-${productId}`);
+            if (qtyElement) {
+                qtyElement.textContent = cart[productId];
+            }
+            updateCartUI();
+        }
+
+        // Eliminar producto específico del carrito
+        function removeFromCart(productId) {
+            delete cart[productId];
+            const qtyElement = document.getElementById(`qty-${productId}`);
+            if (qtyElement) qtyElement.textContent = 0;
+            updateCartUI();
+        }
+
+        // Vaciar carrito completo
+        function clearCart() {
+            cart = {};
+            products.forEach(p => {
+                const qtyElement = document.getElementById(`qty-${p.id}`);
+                if (qtyElement) qtyElement.textContent = 0;
+            });
+            updateCartUI();
+        }
+
+        // Actualizar UI del Resumen del Carrito en Tiempo Real
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const badge = document.getElementById('cart-badge');
+            const totalItemsEl = document.getElementById('cart-total-items');
+            const grandTotalEl = document.getElementById('cart-grand-total');
+
+            container.innerHTML = '';
+            let totalItemsCount = 0;
+            let grandTotal = 0;
+
+            const productKeys = Object.keys(cart);
+
+            if (productKeys.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-8">Tu carrito está vacío. Agrega productos del catálogo.</p>`;
+                badge.textContent = '0';
+                totalItemsEl.textContent = '0 unidades';
+                grandTotalEl.textContent = '$0.00 MXN';
+                return;
+            }
+
+            productKeys.forEach(id => {
+                const qty = cart[id];
+                const product = products.find(p => p.id == id);
+                if (!product) return;
+
+                const lineSubtotal = product.price * qty;
+                totalItemsCount += qty;
+                grandTotal += lineSubtotal;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex items-center justify-between bg-slate-900/60 p-3 rounded-2xl border border-slate-800 text-xs';
+                itemDiv.innerHTML = `
+                    <div class="space-y-1 pr-2">
+                        <span class="font-bold text-white block">${product.name}</span>
+                        <span class="text-slate-400">${qty} x $${product.price.toFixed(2)}</span>
+                    </div>
+                    <div class="text-right flex items-center space-x-3">
+                        <div>
+                            <span class="font-heading font-bold text-amber-400 block">$${lineSubtotal.toFixed(2)}</span>
+                        </div>
+                        <button onclick="removeFromCart(${product.id})" class="text-slate-500 hover:text-red-400 font-bold p-1 transition" title="Eliminar">✕</button>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+
+            badge.textContent = totalItemsCount;
+            totalItemsEl.textContent = `${totalItemsCount} unidades`;
+            grandTotalEl.textContent = `$${grandTotal.toFixed(2)} MXN`;
+        }
+
+        // Ordenar Productos dinámicamente sin recargar la página
+        function sortProducts() {
+            const sortBy = document.getElementById('sort-select').value;
+            let sortedArray = [...products];
+
+            if (sortBy === 'asc') {
+                sortedArray.sort((a, b) => a.price - b.price);
+            } else if (sortBy === 'desc') {
+                sortedArray.sort((a, b) => b.price - a.price);
+            } else {
+                sortedArray.sort((a, b) => a.id - b.id);
+            }
+
+            renderProducts(sortedArray);
+        }
+
+        // 4. Generar y Enviar Pedido por WhatsApp
+        function sendWhatsAppOrder() {
+            const productKeys = Object.keys(cart);
+            if (productKeys.length === 0) {
+                alertCustom("Tu carrito está vacío. Por favor selecciona al menos un producto antes de enviar el pedido.");
+                return;
+            }
+
+            let message = "Hola, me gustaría realizar el siguiente pedido en [NOMBRE_DE_LA_PAPELERIA]:\n\n";
+            let grandTotal = 0;
+
+            productKeys.forEach(id => {
+                const qty = cart[id];
+                const product = products.find(p => p.id == id);
+                if (!product) return;
+
+                const subtotal = product.price * qty;
+                grandTotal += subtotal;
+                message += `• ${product.name} x ${qty} unidad(es) - $${product.price.toFixed(2)} c/u | Subtotal: $${subtotal.toFixed(2)} MXN\n`;
+            });
+
+            message += `\n*PRECIO FINAL TOTAL:* $${grandTotal.toFixed(2)} MXN\n\nQuedo atento(a) para confirmar la disponibilidad y entrega. ¡Gracias!`;
+
+            // Número de WhatsApp configurado con marcador
+            const whatsappNumber = "[NUMERO_WHATSAPP]";
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function alertCustom(msg) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4';
+            modal.innerHTML = `
+                <div class="glass-panel p-6 rounded-3xl max-w-sm w-full border border-slate-700 text-center shadow-2xl">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-4 text-xl font-bold">⚠️</div>
+                    <h3 class="font-heading font-bold text-white text-base mb-2">Aviso de Pedido</h3>
+                    <p class="text-xs text-slate-300 mb-6 leading-relaxed">${msg}</p>
+                    <button onclick="this.closest('.fixed').remove()" class="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-xs transition hover:bg-amber-400">Entendido</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Inicializar renderizado al cargar la página
+        window.onload = function() {
+            renderProducts();
+        };
+    </script>
+</body>
+</html>
